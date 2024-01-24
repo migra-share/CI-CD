@@ -1,4 +1,4 @@
-FROM docker.io/library/openjdk:1
+FROM docker.io/library/openjdk:11
  
 COPY target/ci-cd-pipeline-0.0.1-SNAPSHOT.jar app.jar
  
