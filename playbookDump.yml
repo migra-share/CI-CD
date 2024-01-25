@@ -1,0 +1,10 @@
+---
+- name: Playbook
+  hosts: cicd
+  tasks:
+    - name: log on ECR
+      shell: aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 373610515267.dkr.ecr.eu-west-1.amazonaws.com
+    - name: pull image
+      shell: docker pull 373610515267.dkr.ecr.eu-west-1.amazonaws.com/cicd-ecr:129
+    - name: Run Docker
+      shell: docker run --name=cicd_container_test -d -p 8081:8081 373610515267.dkr.ecr.eu-west-1.amazonaws.com/cicd-ecr:129
