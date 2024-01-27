@@ -1,1 +1,8 @@
-
+---
+- name: Playbook
+  hosts: cicd
+  tasks:
+    - name: main |login to docker
+      community.docker.docker_login:
+         user: migra
+         password: dckr_pat_4XbXYuGIOPSp6C2jaDuEIrgc2PQ
