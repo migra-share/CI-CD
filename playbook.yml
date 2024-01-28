@@ -5,10 +5,4 @@
     - ./vault.yaml
   tasks:
     - name: main |login to docker
-      community.docker.docker_login:
-         username: "{{ username }}"
-         password: "{{ password }}"
-         reauthorize: true
-         registry:  docker.io
-         
-         
+      command: podman login -u "{{ username }} " --password "{{password }}"
