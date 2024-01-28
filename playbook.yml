@@ -1,11 +1,13 @@
 ---
 - name: Playbook
   hosts: cicd
+  vars_files:
+    - ./vault.yaml
   tasks:
     - name: main |login to docker
       community.docker.docker_login:
-         username: migra
-         password: dckr_pat_4XbXYuGIOPSp6C2jaDuEIrgc2PQ
+         username: "{{ username }}"
+         password: "{{ password }}"
          reauthorize: true
          
          
