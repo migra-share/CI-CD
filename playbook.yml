@@ -4,5 +4,8 @@
   tasks:
     - name: main |login to docker
       community.docker.docker_login:
-         user: migra
+         username: migra
          password: dckr_pat_4XbXYuGIOPSp6C2jaDuEIrgc2PQ
+         reauthorize: true
+         
+         
