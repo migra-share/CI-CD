@@ -8,6 +8,7 @@
   tasks:
     - name: main |login to docker
       command: docker login -u "{{ username }} " --password "{{password }}"
+      
     - name: main | pull image
       command: docker pull docker.io/migra/jenkins.sxb.koffi-accademy.fr:"{{ tag }}"
       register: pull
