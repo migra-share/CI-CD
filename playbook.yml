@@ -10,3 +10,8 @@
       command: docker login -u "{{ username }} " --password "{{password }}"
     - name: main | pull image
       command: docker pull docker.io/migra/jenkins.sxb.koffi-accademy.fr:"{{ tag }}"
+      register: pull
+      
+    - name: main | run images
+      command: docker run --name=cicd_container_test -d -p 8081:8081 docker.io/migra/jenkins.sxb.koffi-accademy.fr:"{{ tag }}"
+      when: pull.changed
