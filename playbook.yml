@@ -9,5 +9,6 @@
          username: "{{ username }}"
          password: "{{ password }}"
          reauthorize: true
+         registry:  docker.io
          
          
