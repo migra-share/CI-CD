@@ -2,7 +2,7 @@
 - name: Playbook
   hosts: cicd
   vars:
-   tag : 118
+   tag : 120
   vars_files:
     - ./vault.yaml
   tasks:
@@ -14,5 +14,5 @@
       register: pull
       
     - name: main | run images
-      command: docker run --name="cicd_{{ tag }}" -d -p 8082:8081 docker.io/migra/jenkins.sxb.koffi-accademy.fr:"{{ tag }}"
+      command: docker run --name="cicd_{{ tag }}" -d -p 8"{{ tag }}":8081 docker.io/migra/jenkins.sxb.koffi-accademy.fr:"{{ tag }}"
       when: pull.changed
