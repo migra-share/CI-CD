@@ -2,7 +2,7 @@
 - name: Playbook
   hosts: cicd
   vars:
-   tag : 122
+   tag : 134
   vars_files:
     - ./vault.yaml
   tasks:
