@@ -1,0 +1,94 @@
+#!/bin/bash
+
+PGDATA="/var/lib/pgsql/data"
+BACKUP_DIR="/var/backup/postgresql"
+BACKUP_OPTS="--exclude-table-data=sessions -U postgres --create"
+BACKUP_COMPRESSION="gzip"
+POSTGRES_USER="postgres"
+
+DATE=$(date '+%Y%m%d_%H%M')
+DB_QUERY="select datname from pg_database where not datistemplate and datallowconn order by datname;"
+
+function syntax() {
+    cat <<EOF
+Script to backup PostgreSQL databases
+
+Usage: ${0##*/} [-h|-n <db>]
+    -h        Display this message
+    -n <db>   Back up a specific database
+EOF
+}
+
+function exec_cmd() {
+    local cmd="$@"
+
+    # Backup must be done with postgresql admin user, if not try to switch to this user
+    if [ "$USER" != "$POSTGRES_USER" ]; then
+        if [ "$UID" -eq 0 ]; then
+            su - $POSTGRES_USER -c "${cmd}"
+            return $?
+        else
+            >&2
+            echo "Script must be run with root or $POSTGRES_USER user. Abording backup..."
+            exit 1
+        fi
+    else
+        eval ${cmd}
+        return $?
+    fi
+}
+
+function backup_db() {
+    local dbname=$1
+
+    if [ ! -d ${BACKUP_DIR} ]; then
+        mkdir -p ${BACKUP_DIR} || return 2
+    fi
+
+    case "$BACKUP_COMPRESSION" in
+        gzip)
+            _suffix="gz"
+            ;;
+        bzip*)
+            _suffix="bz2"
+            ;;
+        xz)
+            _suffix="xz"
+            ;;
+        *)
+            _suffix=""
+            ;;
+    esac
+
+    exec_cmd "pg_dump ${BACKUP_OPTS} ${dbname} | ${BACKUP_COMPRESSION} > ${BACKUP_DIR}/backupdb-${dbname}-${DATE}.sql.${_suffix}"
+}
+
+function backup_all_db() {
+    for db in $(exec_cmd "psql -At -c '${DB_QUERY}' postgres")
+    do
+        backup_db ${db}
+    done
+}
+
+while getopts "hn:" OPT; do
+    case $OPT in
+        h)
+            syntax
+            exit 0
+            ;;
+        n)
+            NAME="${OPTARG}"
+            ;;
+        *)
+            echo "Unknown option."
+            syntax
+            exit 1
+            ;;
+    esac
+done
+
+if [ -n "${NAME}" ]; then
+    backup_db ${NAME}
+else
+    backup_all_db
+fi
